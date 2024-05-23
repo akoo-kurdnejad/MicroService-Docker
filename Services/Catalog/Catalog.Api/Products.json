@@ -1,0 +1,18 @@
+[
+  {
+    "Name": "Asus Laptop",
+    "Category": "Computers",
+    "Summery": "Office",
+    "Description": "لپ تاپ خوبی است",
+    "ImageFile": "asfdsdafjasfhsdalkjfkasdhfkjdhfkjdhfkjhkshfksdhfkdshfkdshfksdjf",
+    "Price": "25000000"
+  },
+  {
+    "Name": "Msi Laptop",
+    "Category": "Computers",
+    "Summery": "Gamming",
+    "Description": "لپ تاپ بازی است",
+    "ImageFile": "asfdsdafjasfhsdalkjfkasdhfkjdhfkjdhfkjhkshfksdhfkdshfkdshfksdjf",
+    "Price": "150000000"
+  }
+]

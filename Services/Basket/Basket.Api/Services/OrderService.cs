@@ -7,10 +7,11 @@ namespace Basket.Api.Services
     {
         #region Constructor
         private readonly IOrderRepository _orderRepository;
-
-        public OrderService(IOrderRepository orderRepository)
+        private readonly IDiscountGrpcService _discountGrpcService;
+        public OrderService(IOrderRepository orderRepository, IDiscountGrpcService discountGrpcService)
         {
             _orderRepository = orderRepository;
+            _discountGrpcService = discountGrpcService;
         }
         #endregion Constructor
 
@@ -21,6 +22,7 @@ namespace Basket.Api.Services
         //****************** AddOrUpdate *******************
         public async Task<Order> AddOrUpdateUserBasket(Order request)
         {
+            await SetDiscount(request);
             await _orderRepository.AddOrUpdateAsync(request);
             return await this.GetUserBasket(request.UserName);
         }
@@ -28,5 +30,15 @@ namespace Basket.Api.Services
         //***************** DeleteUserBasket ****************
         public async Task DeleteUserBasket(string userName)
             => await _orderRepository.DeleteAsync(userName);
+
+        //*********************************
+        private async Task SetDiscount(Order request)
+        {
+            foreach (var item in request.OrderDetails)
+            {
+                var coupon = await _discountGrpcService.GetDiscount(item.ProductId);
+                item.Price -= coupon.Amount;
+            }
+        }
     }
 }

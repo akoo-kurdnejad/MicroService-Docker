@@ -1,4 +1,5 @@
-﻿using Basket.Api.Entities;
+﻿using Basket.Api.DTOs;
+using Basket.Api.Entities;
 
 namespace Basket.Api.Services
 {
@@ -9,5 +10,7 @@ namespace Basket.Api.Services
         Task<Order>AddOrUpdateUserBasket(Order request);
 
         Task DeleteUserBasket(string userName);
+
+        Task BasketCheckout(BasketCheckoutDTO request);
     }
 }

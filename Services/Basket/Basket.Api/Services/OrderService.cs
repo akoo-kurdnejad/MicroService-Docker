@@ -1,5 +1,9 @@
-﻿using Basket.Api.Entities;
+﻿using AutoMapper;
+using Basket.Api.DTOs;
+using Basket.Api.Entities;
 using Basket.Api.Repositories;
+using EventBus.Messages.Events;
+using MassTransit;
 
 namespace Basket.Api.Services
 {
@@ -8,10 +12,18 @@ namespace Basket.Api.Services
         #region Constructor
         private readonly IOrderRepository _orderRepository;
         private readonly IDiscountGrpcService _discountGrpcService;
-        public OrderService(IOrderRepository orderRepository, IDiscountGrpcService discountGrpcService)
+        private readonly IMapper _mapper;
+        private readonly IPublishEndpoint _publishEndpoint;
+
+        public OrderService(IOrderRepository orderRepository,
+                            IDiscountGrpcService discountGrpcService,
+                            IMapper mapper,
+                            IPublishEndpoint publishEndpoint)
         {
             _orderRepository = orderRepository;
             _discountGrpcService = discountGrpcService;
+            _mapper = mapper;
+            _publishEndpoint = publishEndpoint;
         }
         #endregion Constructor
 
@@ -31,6 +43,25 @@ namespace Basket.Api.Services
         public async Task DeleteUserBasket(string userName)
             => await _orderRepository.DeleteAsync(userName);
 
+        //***************** BasketCheckout ****************
+        public async Task BasketCheckout(BasketCheckoutDTO request)
+        {
+            var basket = await this.GetUserBasket(request.UserName);
+            if (basket is null)
+                throw new ArgumentException("not found basket");
+
+            await PublishEvent(request, basket);
+            await this.DeleteUserBasket(request.UserName);
+        }
+
+        //*********************************
+        private async Task PublishEvent(BasketCheckoutDTO request, Order basket)
+        {
+            var eventMessage = _mapper.Map<BasketCheckoutEvent>(request);
+            eventMessage.TotalPrice = basket.TotalPrice;
+            await _publishEndpoint.Publish(eventMessage);
+        }
+
         //*********************************
         private async Task SetDiscount(Order request)
         {
@@ -40,5 +71,6 @@ namespace Basket.Api.Services
                 item.Price -= coupon.Amount;
             }
         }
+
     }
 }

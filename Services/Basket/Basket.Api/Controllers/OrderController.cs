@@ -1,4 +1,5 @@
-﻿using Basket.Api.Services;
+﻿using Basket.Api.DTOs;
+using Basket.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -40,6 +41,14 @@ namespace Basket.Api.Controllers
         public async Task<IActionResult> DeleteBasket(string userName)
         {
             await _orderService.DeleteUserBasket(userName);
+            return Ok();
+        }
+
+        [HttpPost]
+        [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> Checkout([FromBody] BasketCheckoutDTO request)
+        {
+            await _orderService.BasketCheckout(request);
             return Ok();
         }
         #endregion Actions

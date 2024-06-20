@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Api.Controllers
 {
-    [Route("api/[action]/[controller]")]
+    [Route("api/v1/[controller]/[action]")]
     [ApiController]
     public class ProductController : ControllerBase
     {
@@ -62,7 +62,7 @@ namespace Catalog.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> CreateProduct(string id)
+        public async Task<IActionResult> DeleteProduct(string id)
         {
             var result = await _productService.DeleteProduct(id);
             return Ok(result);

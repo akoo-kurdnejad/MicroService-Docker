@@ -5,7 +5,7 @@ using System.Net;
 
 namespace Discount.Api.Controllers
 {
-    [Route("api/[action]/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class DiscountController : ControllerBase
     {
